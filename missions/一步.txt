@@ -1,0 +1,5 @@
+#10
+Numpad0|2.5
+Numpad0|2.5
+Numpad0|2.5
+1|40

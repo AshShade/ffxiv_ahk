@@ -1,0 +1,14 @@
+version: &version 1.1.1
+input:  
+  script: ../production.ahk
+  instruction: ./index.html
+  txt: ../missions/sample.txt
+output:
+  zip: 生产脚本
+  script: &exe 运行.ahk
+  instruction: 使用说明.html
+  txt: 任务列表范例.txt
+template:
+  title: 生产脚本使用说明
+  version: *version
+  exe: *exe
