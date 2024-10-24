@@ -42,7 +42,7 @@ pixScreenSave(fileName, ps := 0){
     Gdip_SaveBitmapToFile(ps,fileName)
 }
 pixMatch(pix,t){
-    if (t.match){
+    if (HasMethod(t,"match")){
         return t.match(pix)
     } else if (IsObject(t)){
         for k, v in t {
@@ -81,14 +81,14 @@ class PixCond {
 
 class PixRGBMatcher {
     __New(c){
-        this.r_min := c.r_min ? c.r_min : 0
-        this.r_max := c.r_max ? c.r_max : 255
+        this.r_min := HasProp(c,"r_min") ? c.r_min : 0
+        this.r_max := HasProp(c,"r_max") ? c.r_max : 255
 
-        this.g_min := c.g_min ? c.g_min : 0
-        this.g_max := c.g_max ? c.g_max : 255
+        this.g_min := HasProp(c,"g_min") ? c.g_min : 0
+        this.g_max := HasProp(c,"g_max") ? c.g_max : 255
       
-        this.b_min := c.b_min ? c.b_min : 0
-        this.b_max := c.b_max ? c.b_max : 255
+        this.b_min := HasProp(c,"b_min") ? c.b_min : 0
+        this.b_max := HasProp(c,"b_max") ? c.b_max : 255
     }
     match(pix){
         r := pix >> 16 & 0xFF

@@ -1,8 +1,10 @@
+#Include  %A_ScriptDir%\lib\pix.ahk
+
 class ComboChecker {
     __New(coords){
         this.coords := coords 
         this.state := [0,0]
-        this.is_active := new PixRGBMatcher({r_min : 180, b_max : 80})
+        this.is_active := PixRGBMatcher({r_min : 180, b_max : 80})
     }
 
     check(ps) {

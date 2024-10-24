@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2.0
+#Include lib/Admin.ahk
 #Include %A_ScriptDir%\lib\pix.ahk
 
 class PixelLocator {
@@ -26,6 +27,17 @@ class PixelLocator {
         this.x := px
         this.y := py
         
+
+
+        if (!this.dot) {
+            this.dot := this.gui.Add("Progress","w5 h5 backgroundred")
+            this.square := this.gui.Add("Progress", "x" ((A_ScreenWidth - 1000)/this.scale) " y" ((A_ScreenHeight - 200)/this.scale) " w30 h30")
+            this.text := this.gui.Add("Text", "w900 x" ((A_ScreenWidth - 930)/this.scale) " y" ((A_ScreenHeight - 200)/this.scale))
+        } 
+
+        this.dot.Visible := false
+        Sleep -1
+
         c := pixGet(px,py)
         cr := c >> 16 & 0xFF
         cg := c >> 8 & 0xFF
@@ -33,12 +45,8 @@ class PixelLocator {
         colorHex := Format("{:06X}", c)
         guiText := Format("0x{}({: 3u},{: 3u},{: 3u})|{: 4u},{: 4u}",colorHex,cr,cg,cb,Px,Py)
 
-        if (!this.dot) {
-            this.dot := this.gui.Add("Progress","w5 h5 backgroundred")
-            this.square := this.gui.Add("Progress", "x" ((A_ScreenWidth - 1000)/this.scale) " y" ((A_ScreenHeight - 200)/this.scale) " w30 h30")
-            this.text := this.gui.Add("Text", "w900 x" ((A_ScreenWidth - 930)/this.scale) " y" ((A_ScreenHeight - 200)/this.scale))
-        } 
         this.dot.Move(px/this.scale + 1, py/this.scale + 1)
+        this.dot.Visible := true
         this.text.Text := guiText
         this.square.Opt("+background" colorHex)
         Sleep -1
@@ -61,6 +69,7 @@ pl := PixelLocator()
 ^Left::pl.Move(-1,0)
 ^Right::pl.Move(1,0)
 ^Down::pl.Move(0,1)
+\::pl.Move(0,0)
 NumLock::CutScreen()
 
 CutScreen(){
