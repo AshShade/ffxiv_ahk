@@ -30,6 +30,7 @@ class BuffObserver {
                 task := tasks[index]
                 key := task[1]
                 matcher := task[2]
+        
                 if (!pixMatch(c,matcher)) {
                     buffs[key] := 0
                     index += 1

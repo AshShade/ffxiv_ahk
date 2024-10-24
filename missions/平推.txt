@@ -1,5 +1,5 @@
-#10
+#20
 Numpad0|2.5
 Numpad0|2.5
 Numpad0|2.5
-f|40
+q|13

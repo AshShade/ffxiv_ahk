@@ -3,7 +3,7 @@
 #Include, lib/combat/LifecycleObserver.ahk
 #Include, lib/combat/BuffObserver.ahk
 
-#Include, lib/Logger.ahk
+; #Include, lib/Logger.ahk
 
 class TeamController {
     __New(){
@@ -17,7 +17,7 @@ class TeamController {
 
         ; 八人本
         melee_jobs := [5,6,3,2]
-        range_jobs := [8,7,4,1]
+        range_jobs := [7,8,4,1]
     
         this.queues := [this.arrayMerge(melee_jobs,range_jobs),this.arrayMerge(range_jobs,melee_jobs)]
         this.timers := [0,0,0,0,0,0,0,0]
@@ -86,11 +86,11 @@ class DrawCardController {
 
   
         this.cSolar  := 0xFBEFE5
-        this.cLunar := 0xFAF3CE
-        this.cCelestial := 0xB4ECEA
+        this.cLunar := 0xF6E8AD
+        this.cCelestial := 0xAFEAE9
 
-        this.cDivinationActive := 0x483A3A
-        this.cDivinationReady := 0x373030
+        this.cDivinationActive := 0x443535
+        this.cDivinationReady := 0x322C2C
 
         this.kDivination := "F3"
         this.kPlay := ["F9","F10","F11","F12","5","6","7","8"]
@@ -98,7 +98,7 @@ class DrawCardController {
 
         this.condDraw := new PixCond(2060,1835,0xAE7E4F)
         this.condSDraw := new PixCond(1985,1885,0x726985)
-        this.condRDraw := new PixCond(2174,1907,[0xFFFFFF,0xE8D7C9])
+        this.condRDraw := new PixCond(2174,1907,[0xFFFFFF,0xE8D4C9])
         this.kDraw := "F6"
         this.kSDraw := "F7"
         this.kRDraw := "F8"
@@ -241,6 +241,17 @@ class DrawCardController {
             return this.kDivination
         }
         this.updateSeals()
+
+        ; txt := ""
+        ; if (this.handcard == 0){
+        ;     txt .=  0
+        ; } else {
+        ;     txt  .= this.handcard[1] . "," . this.handcard[2] 
+        ; }
+        ; txt .= " | "
+        ; txt .= this.seals[1] . "," . this.seals[2] . "," . this.seals[3]
+        ; log(txt)
+
         kDraw := this.getReadyDrawSkill()
         if (this.handcard == 0){
             if (kDraw){
@@ -260,13 +271,13 @@ class Astrologian{
         this.gcd_idle := 0xFFF864
         this.gcd_busy := [0x342939,0x685172]
         this.lo := new LifecycleObserver(this)
-        this.bo := new BuffObserver({"lightspeed" : new PixCond(1500,90,0x7C784D), "swiftcast" : new PixCond(1500,90,0x8E4495)})
+        this.bo := new BuffObserver({"lightspeed" : 0x76704E, "swiftcast" : 0xC678A7, "test" : 0x7B378C})
         this.mo := new MoveObserver()
         this.dcc := new DrawCardController()
         this.cond_ogcd := new PixCond(1490,1930,0x69441C)
         this.cond_dot := new PixCond(1340,1360,0xC0F4FF)
         this.cond_dot_renew := new PixCond(1340,1395,[0x4B9666,0x569C73])
-        this.cond_lucid_dreaming := new PixCond([[2455,1482,0x57473D],[1490,1840,0x4A2724]])
+        this.cond_lucid_dreaming := new PixCond([[2455,1482,0x55453C],[1490,1840,0x4A2724]])
         this.cond_celestial_intersection := new PixCond(1400,1900,0xAC7C7C)
     }
 
@@ -293,6 +304,7 @@ class Astrologian{
         ps := pixScreenBatch()
         this.bo.update(ps)
         this.ps := ps
+
         if (!(this.bo.get("lightspeed") || this.bo.get("swiftcast")) && this.is_moving()){
             return this.get_ogcd(aoe)
         }

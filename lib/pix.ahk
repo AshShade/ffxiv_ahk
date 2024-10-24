@@ -1,4 +1,4 @@
-#Include, lib/Gdip_All.ahk
+#Include %A_ScriptDir%\lib\Gdip_All.ahk
 ; Start gdip+
 If !pToken := Gdip_Startup()
 {
@@ -6,28 +6,13 @@ If !pToken := Gdip_Startup()
    ExitApp
 }
 
-scr := 0 
-Loop 3 {
-    m := GetMonitorInfo(A_Index)
-    if (m.Right == 3840){
-        scr := A_Index
-        break
-    }
-}
 
-if (!scr){
-    MsgBox, Failed to find main monitor
-    ExitApp 
-}
-
-CoordMode, Pixel, Screen
-
+CoordMode "Pixel", "Screen"
 
 pixScreenBatch(){
-    global scr
-    ps := Gdip_BitmapFromScreen(scr)
+    ps := Gdip_BitmapFromScreen(0)
     if (ps == -1){
-        MsgBox pixScreenBatch failed
+        MsgBox "pixScreenBatch failed"
         ExitApp    
     }
     return ps
@@ -48,7 +33,7 @@ pixGet(x,y := 0,ps := 0){
     if (ps){
         c := Gdip_GetPixel(ps,x,y) 
     } else {
-        PixelGetColor, c, x, y, RGB
+        c := PixelGetColor(x, y)
     }
     return c & 0xFFFFFF
 }

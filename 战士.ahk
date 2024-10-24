@@ -1,8 +1,11 @@
 #Include, lib/Admin.ahk
 #Include, lib/combat/LifecycleObserver.ahk
 #Include, lib/combat/ComboChecker.ahk
+#Include, lib/combat/BuffObserver.ahk
 
 #Include, lib/pix.ahk
+; #Include, lib/Logger.ahk
+
 
 class Warrior {
     __New(){
@@ -15,19 +18,12 @@ class Warrior {
 
         this.lo := new LifecycleObserver(this)
         this.cc := new ComboChecker([[1707,1846],[1786,1894],[1783,1798]])
+        this.bo := new BuffObserver({"inner_release" : 0xED351F,"stormseye" : 0xCD552F,"nascent_chaos" : 0x593715})
 
-        ; buff 监控
-        this.buff_first := [1500,90] 
-        this.buff_next := 90
-        this.buff_count := 10
-        this.buff_timer_offset := [-13,60]
-        this.c_buff_stormseye := 0xCC4A19
-        this.c_buff_inner_release := 0xED351B
-        this.c_buff_nascent_chaos := 0x593311
-        this.c_buff_timer :=[0x89C9A3,0xB5EED0,0x71B58B,0xB3EDCE,0xADE7C7] ; [1min,5x,4x,3x,2X]
+        ; this.c_buff_timer :=[0x89C9A3,0xB5EED0,0x71B58B,0xB3EDCE,0xADE7C7] ; [1min,5x,4x,3x,2X]
 
         ; 原初的解放
-        this.cond_inner_release := new PixCond(2000,1600,0xE68D75)
+        this.cond_inner_release := new PixCond(2000,1600,0xE58B72)
 
         ; 兽魂
         matcher_r200 := new PixRGBMatcher({"r_min" : 200})
@@ -37,15 +33,15 @@ class Warrior {
         this.cond_beast_gauge_60 := new PixCond(1536,1670,matcher_r200)
         this.cond_beast_gauge_70 := new PixCond(1567,1670,matcher_r200)
 
-        this.cond_decimate := new PixCond(1865,1860,[0x76A7B5,0x679DAD,0xF89273,0xF78664])
+        this.cond_decimate := new PixCond(1865,1860,[0x76A7B5,0x679DAD,0xF89173,0xF78664])
 
         ; 战嚎
         this.p_infuriate := [2085,1645]
         this.c_infuriate_stack2 := 0xFFFFFF
-        this.c_infuriate_stack1 := 0xE8D7C9
+        this.c_infuriate_stack1 := 0xE8D4C9
 
         ; 动乱
-        this.cond_upheaval :=  new PixCond(2170,1600,0x824D4A)
+        this.cond_upheaval :=  new PixCond(2170,1600,0x804B47)
         
         this.key_c1 := "F1"
         this.key_ac1 := "F11"
@@ -61,13 +57,13 @@ class Warrior {
         this.ogcd_set["dl"]   := ["F8", this.cond_upheaval]
 
         ; 防御能力技 defensive abilities
-        this.ogcd_set["da_e"] := ["e",new PixCond(2000,1700,0x9DCF88)] ; 原初的直觉
-        this.ogcd_set["da_q"] := ["q",new PixCond(2050,1700,0xCF67BF)] ; 雪仇
-        this.ogcd_set["da_1"] := ["1",new PixCond(2150,1700,0x31783A)] ; 战栗
-        this.ogcd_set["da_2"] := ["2",new PixCond(2200,1700,0x654432)] ; 铁壁
-        this.ogcd_set["da_3"] := ["3",new PixCond(2300,1700,0x7A189D)] ; 复仇
-        this.ogcd_set["da_4"] := ["4",new PixCond(2400,1700,0x889B82)] ; 摆脱
-        this.ogcd_set["da_g"] := ["g",new PixCond(2300,1600,0x7C8838)] ; 泰然自若
+        ; this.ogcd_set["da_e"] := ["e",new PixCond(2000,1700,0x9DCF88)] ; 原初的直觉
+        ; this.ogcd_set["da_q"] := ["q",new PixCond(2050,1700,0xCF67BF)] ; 雪仇
+        ; this.ogcd_set["da_1"] := ["1",new PixCond(2150,1700,0x31783A)] ; 战栗
+        ; this.ogcd_set["da_2"] := ["2",new PixCond(2200,1700,0x654432)] ; 铁壁
+        ; this.ogcd_set["da_3"] := ["3",new PixCond(2300,1700,0x7A189D)] ; 复仇
+        ; this.ogcd_set["da_4"] := ["4",new PixCond(2400,1700,0x889B82)] ; 摆脱
+        ; this.ogcd_set["da_g"] := ["g",new PixCond(2300,1600,0x7C8838)] ; 泰然自若
 
         this.da_queue := []
     }
@@ -234,38 +230,20 @@ class Warrior {
     }
 
     check_buff_state(ps){
-        x := this.buff_first[1]
-        y := this.buff_first[2]
-        p_buff_stormseye := false
-        
-        this.buff_state_inner_release := false
-        this.buff_state_nascent_chaos := false
-
-        Loop, % this.buff_count {
-            c := pixGet(x,y,ps)
-            if (pixMatch(c,this.c_buff_stormseye)){
-                p_buff_stormseye := [x,y]
-            } else if (pixMatch(c,this.c_buff_inner_release)){
-                this.buff_state_inner_release := true
-            } else if (pixMatch(c,this.c_buff_nascent_chaos)){
-                this.buff_state_nascent_chaos := true
-            }
-            x += this.buff_next
-        }
-
-        if (p_buff_stormseye){
-            x := p_buff_stormseye[1] + this.buff_timer_offset[1]
-            y := p_buff_stormseye[2] + this.buff_timer_offset[2]
-
-            if (pixMatch(pixGet(x,y,ps),this.c_buff_timer)){
+        this.bo.update(ps)
+        this.buff_state_inner_release := this.bo.get("inner_release")
+        this.buff_state_nascent_chaos := this.bo.get("nascent_chaos")
+        sec_buff_stormseye := this.bo.get("stormseye")
+        if (sec_buff_stormseye) {
+            if (sec_buff_stormseye > 1){
                 this.buff_state_stormseye := 2
             } else {
                 this.buff_state_stormseye := 1
             }
         } else {
             this.buff_state_stormseye := 0
-        }   
-        log(this.buff_state_stormseye . " | " . this.buff_state_inner_release  . " | " . this.buff_state_nascent_chaos  )
+        }
+        ; log(this.buff_state_inner_release . "|" . this.buff_state_nascent_chaos . "|" . this.buff_state_stormseye)
     }
 
     make_decision(series){
@@ -382,13 +360,13 @@ Space::Shift
 $f::startAttack("f")
 $v::startAttack("v")
 
-$e::job.insert("e")
-$q::job.insert("q")
-$1::job.insert("1")
-$2::job.insert("2")
-$3::job.insert("3")
-$4::job.insert("4")
-$g::job.insert("g")
+; $e::job.insert("e")
+; $q::job.insert("q")
+; $1::job.insert("1")
+; $2::job.insert("2")
+; $3::job.insert("3")
+; $4::job.insert("4")
+; $g::job.insert("g")
 #IfWinActive
 
 

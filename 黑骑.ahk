@@ -8,14 +8,14 @@
 class DarkKnight {
     __New(){
         this.gcd_window := 2.36
-        this.gcd_coord := [1815,1710]
-        this.gcd_idle := 0xD98A60
-        this.gcd_busy := [0x744A33, 0x8A4A33]
+        this.gcd_coord := [1630,1052]
+        this.gcd_idle := 0xFD3E42
+        this.gcd_busy := [0x8D2325, 0xA22325]
 
         this.decision := {}
 
         this.lo := new LifecycleObserver(this)
-        this.cc := new ComboChecker([[1707,1846],[1786,1894],[1783,1798]])
+        this.cc := new ComboChecker([[1902,108],[1947,108],[1783,1798]])
 
         matcher_rf0 := new PixRGBMatcher({"r_min" : 0xF0})
         matcher_rff := new PixRGBMatcher({"r_min" : 0xFF})
@@ -28,8 +28,8 @@ class DarkKnight {
 
 
         this.key_bloodspiller := "F9" ; 血溅
-        this.key_combo := ["F2","F3","F12"]
-        this.key_c1 := "F1"
+        this.key_combo := ["2","3","T"]
+        this.key_c1 := "1"
         this.key_ac1 := "F11"
 
 
@@ -43,9 +43,9 @@ class DarkKnight {
         this.ogcd_set["bw"] := ["F10",  new PixCond(2050,1600,0xCF3D65)]    ; 嗜血 Blood Weapon
   
         ; 暗影锋/暗影波动 泻蓝 Mana Consume
-        cond_ayf1 := new PixCond(2510,1483,matcher_rf0)
-        cond_ayf2 := new PixCond([[2421,1481,matcher_rf0],[1655,1729,matcher_rff]],true)
-        key_ayf := "F5"
+        cond_ayf1 := new PixCond(1560,1069,matcher_rf0)
+        cond_ayf2 := new PixCond([[1483,1068,matcher_rf0],[2537,652,matcher_rff]],true)
+        key_ayf := "E"
         key_aybd := "6"
         this.ogcd_set["mc_1"] := [key_ayf,cond_ayf1]
         this.ogcd_set["mc_2"] := [key_ayf,cond_ayf2]
@@ -53,6 +53,7 @@ class DarkKnight {
         this.ogcd_set["mc_2_aoe"] := [key_aybd,cond_ayf2]
 
         this.oa_queue := ["mc_1","ls","ad","cs","mc_2","se"]
+
 
 
         ; 防御能力技 defensive abilities

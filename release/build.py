@@ -7,7 +7,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-with open("config.yaml","r") as f:
+with open("config.yaml","rb") as f:
     config = yaml.load(f,Loader=Loader)
 dist = "./dist/"
 try:
@@ -17,7 +17,7 @@ except FileNotFoundError:
 
 os.mkdir(dist)
 
-with open(config["input"]["instruction"],"r") as fin,open(dist + config["output"]["instruction"],"w") as fout:
+with open(config["input"]["instruction"],"r",encoding="utf8") as fin, open(dist + config["output"]["instruction"],"w",encoding="utf8") as fout:
     t = Template(fin.read()).substitute(config["template"])
     fout.write(t)
 for ft in ["script","txt"]:

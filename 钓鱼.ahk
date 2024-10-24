@@ -1,6 +1,7 @@
 ﻿#Include, lib/Admin.ahk
 #Include, lib/pix.ahk
-#Include, fishing_strategy/重建4_摇风.ahk
+#Include, fishing_strategy/general.ahk
+; #Include, lib/Logger.ahk
 
 window := new Window()
 strategy := new Strategy()
@@ -31,9 +32,9 @@ class Window {
         this.id := wid1
 
         WinGetPos , , , , height , ahk_id %wid1%
-        y := A_ScreenHeight - height
+        y := A_ScreenHeight - height - 60
         WinMove, ahk_id %wid1%,, 0, y
-        WinMove, ahk_id %wid2%,, 0, 1320,1000,170
+        WinMove, ahk_id %wid2%,, 0, y - 200, 700, 200
     }
 
     findFishingGauge(){
@@ -129,52 +130,55 @@ class Fisher {
         this.window := window
         this.strategy := strategy
 
-        this.cond_amiss := new PixCond(314,1731,0x44B4FF)                           ; 警惕  
+        this.cond_amiss := new PixCond(353,950,0x123456)                           ; 警惕  
+        this.cond_collect := new PixCond(370,1000,0x77390C)                         ; 收藏品
 
-        this.cond_cast := new PixCond(700,1700,0xFF9212)                            ; 抛竿
-        this.cond_hook := new PixCond(800,1700,0X80EEE6)                            ; 提钩 
-        this.cond_mooch := new PixCond(860,1700,0x9C8B31)                           ; 以小钓大
+        this.cond_cast := new PixCond(650,700,0x47291E)                             ; 抛竿
+        this.cond_hook := new PixCond(850,700,0XA7FFED)                             ; 提钩 
+        ; this.cond_mooch := new PixCond(860,1700,0x9C8B31)                           ; 以小钓大
         
-        matcher := new PixRGBMatcher({r_max : 100, g_max : 100, b_max : 100})
-        this.cond_gp_empty := new PixCond(773,1495,matcher)                         ; 采集力少于100
-        this.cond_gp_lack := new PixCond(858,1493,0x57473D)                         ; 采集力少于400
-        this.cond_gp_full := new PixCond(1015,1495,0x62A7CB)                        ; 采集力满了
-        this.cond_cordial := new PixCond(910,1800,[0x82695F,0x6B695F])              ; [强心剂HQ,轻型强心剂HQ], 高级强心剂，
-        this.cond_buff_patience := new PixCond(1000,1600,0xF5997E)                  ; 耐心BUFF
-        this.cond_patience2 :=  new PixCond(910,1900,0x11363D)                      ; 耐心2
+        ; matcher := new PixRGBMatcher({r_max : 100, g_max : 100, b_max : 100})
+        ; this.cond_gp_empty := new PixCond(773,1495,matcher)                         ; 采集力少于100
+        ; this.cond_gp_lack := new PixCond(858,1493,0x57473D)                         ; 采集力少于400
+        ; this.cond_gp_full := new PixCond(1015,1495,0x62A7CB)                        ; 采集力满了
+        this.cond_cordial := new PixCond(800,770,0x706E63)                          ;  高级强心剂
+        this.cond_buff_patience := new PixCond(50,820,0xEE9977)                     ; 耐心BUFF
+        this.cond_patience2 :=  new PixCond(640,780,0x184144)                       ; 耐心2
+        this.cond_favor := new PixCond(700,780,0x376CC0)                            ; 沙利亚克的恩宠
 
-        this.p_gauge := [18,1350]
+        this.p_gauge := [18,520]
         this.c_tug_l := 0x2A9D8F
         this.c_tug_m := 0xC14953
         this.c_tug_h := 0xB68738
 
-        this.p_mooch2 := [1015,1680]                                                ; 以小钓大2
-        this.c_mooch2_active := 0x625E5C
-        this.c_mooch2_ready := 0x5A5858
+        ; this.p_mooch2 := [1015,1680]                                                ; 以小钓大2
+        ; this.c_mooch2_active := 0x625E5C
+        ; this.c_mooch2_ready := 0x5A5858
     } 
 
     collect_state_cast(){
         s := []
         ps := pixScreenBatch()
-        c := pixGet(this.p_mooch2,ps)
-        if (c == this.c_mooch2_active){
-            s["mooch2"] := "active"
-        } else if (c == this.c_mooch2_ready){
-            s["mooch2"] := "ready"
-        }
-        s["mooch"] := this.cond_mooch.meet(ps)
+        ; c := pixGet(this.p_mooch2,ps)
+        ; if (c == this.c_mooch2_active){
+        ;     s["mooch2"] := "active"
+        ; } else if (c == this.c_mooch2_ready){
+        ;     s["mooch2"] := "ready"
+        ; }
+        ; s["mooch"] := this.cond_mooch.meet(ps)
         
-        if (this.cond_gp_full.meet(ps)){
-            s["gp"] := "full"
-        } else if (this.cond_gp_empty.meet(ps)){
-            s["gp"] := "empty"
-        } else if (this.cond_gp_lack.meet(ps)){
-            s["gp"] := "lack"
-        }
+        ; if (this.cond_gp_full.meet(ps)){
+        ;     s["gp"] := "full"
+        ; } else if (this.cond_gp_empty.meet(ps)){
+        ;     s["gp"] := "empty"
+        ; } else if (this.cond_gp_lack.meet(ps)){
+        ;     s["gp"] := "lack"
+        ; }
         
         s["cordial"] := this.cond_cordial.meet(ps)
         s["buff_patience"] := this.cond_buff_patience.meet(ps)
         s["patience2"] := this.cond_patience2.meet(ps)
+        s["favor"] := this.cond_favor.meet(ps)
         pixScreenFree(ps)
         return s
     }
@@ -195,8 +199,8 @@ class Fisher {
         s := []
         s["tug"] := this.get_tug()
         s["buff_patience"] := this.cond_buff_patience.meet()
-        s["last_cast"] := this.last_cast
-        s["last_cast_t"] := this.last_cast_t
+        ; s["last_cast"] := this.last_cast
+        ; s["last_cast_t"] := this.last_cast_t
         return s
     }
 
@@ -212,19 +216,22 @@ class Fisher {
             if (key){
                 this.last_cast := key
                 this.last_cast_t := A_TickCount
-                this.window.send(key)
             }
         } else if (this.cond_hook.meet()){
             state := this.collect_state_hook()
             key := this.strategy.hook(state)
-            if (key){
-                this.window.send(key)
-            }
+        } else if (this.cond_collect.meet()){
+            key := "Esc"
         }
-        t := key ? 1000 : 100
+        if (key) {
+            this.window.send(key)
+            t := 2000
+        } else {
+            t := 100
+        }
         return t
     }
 }
 
 #MaxThreadsPerHotkey 3
-#x::daemon.toggle()
+#x::daemon.toggle()ii
