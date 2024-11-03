@@ -69,7 +69,7 @@ pl := PixelLocator()
 ^Left::pl.Move(-1,0)
 ^Right::pl.Move(1,0)
 ^Down::pl.Move(0,1)
-\::pl.Move(0,0)
+^/::pl.Move(0,0)
 NumLock::CutScreen()
 
 CutScreen(){
