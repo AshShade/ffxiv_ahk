@@ -70,7 +70,7 @@ pl := PixelLocator()
 ^Right::pl.Move(1,0)
 ^Down::pl.Move(0,1)
 ^/::pl.Move(0,0)
-NumLock::CutScreen()
+^Backspace::CutScreen()
 
 CutScreen(){
     pl.gui.Hide()

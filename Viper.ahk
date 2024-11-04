@@ -19,11 +19,19 @@ class Viper extends FFXIVCombatRole {
                 ["r",[1120,1060]]
             ], 0xFFFFFF),
             ActiveSkillDetector([
+                ["2",[1970,1009]],
+                ["1",[1900,1009]],
                 ["e",[1830,1009]],
                 ["q",[1760,1009]]
             ]),
             "e"
         ]
+    }
+    keyCooldowns() {
+        return Map(
+            "F1", 1000,
+            "F2", 1000
+        )
     }
 }
 Viper()

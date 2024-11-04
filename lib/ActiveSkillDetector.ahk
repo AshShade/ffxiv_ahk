@@ -2,7 +2,7 @@
 #Include pix.ahk
 
 class ActiveSkillDetector{
-    static DefaultActiveCond := PixRGBMatcher({r_min : 180, b_max : 80})
+    static DefaultActiveCond := PixRGBMatcher({r_min:255, g_min:100, b_max : 150})
     __New(skils, activeCond := ActiveSkillDetector.DefaultActiveCond){
         this.skils := skils
         this.is_active := activeCond
