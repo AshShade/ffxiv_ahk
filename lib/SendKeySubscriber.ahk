@@ -21,6 +21,7 @@ class SendKeySubscriber extends Subscriber {
             key := keyPress
         }
         if (key && this.isKeyReady(key) ) {
+            this.lastTimeKeySent.Set(key, A_TickCount)
             SendInput "{" key "}"
         }
     }

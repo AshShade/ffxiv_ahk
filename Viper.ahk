@@ -29,8 +29,8 @@ class Viper extends FFXIVCombatRole {
     }
     keyCooldowns() {
         return Map(
-            "F1", 1000,
-            "F2", 1000
+            "F2", 1500,
+            "F3", 1500
         )
     }
 }

@@ -7,8 +7,8 @@
 
 class FFXIVCombatRole {
     __New(){
-        timeTick := TimeTickPublisher(200)
-        screenShot := ScreenShotProcessor()
+        timeTick := TimeTickPublisher(100)
+        screenShot := ScreenShotProcessor(3)
         fKey := FKeyHoldProcessor.getInstance()
         decision := DecisionMaker(this.strategy())
         sendKey := SendKeySubscriber(decision, this.keyCooldowns())
