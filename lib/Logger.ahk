@@ -21,7 +21,7 @@ class Logger {
 
     show(message){
         if (!this.text) {
-            this.text := this.gui.Add("Text", "w400 x0 y0")
+            this.text := this.gui.Add("Text", "w800 x0 y0")
         } 
         this.text.Text := message
         Sleep -1
@@ -38,3 +38,5 @@ class Logger {
         Logger.getInstance().show(message)
     }
 }
+
+Logger.log("Hello World")
