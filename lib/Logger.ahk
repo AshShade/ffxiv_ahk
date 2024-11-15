@@ -1,47 +1,40 @@
-class MyLogger {
+#Requires AutoHotkey v2.0
+
+class Logger {
     __New(){
         ; Creates the overlay
-        CoordMode, Pixel, Screen
-        CoordMode, Mouse, Screen
-        CustomColor = EEAA99  ; Can be any RGB color (it will be made transparent below).
-        Gui, Color, %CustomColor%
-        Gui, -caption +ToolWindow +AlwaysOnTop
-        Gui,Font,s24 cwhite W700,Courier New
+        CoordMode "Pixel", "Screen"
+        CoordMode "Mouse", "Screen"
+        this.gui := Gui("-caption +ToolWindow +AlwaysOnTop +Lastfound", "ahk debugger message show")
+        this.gui.SetFont("s24 cwhite W700", "Courier New")
+
+        ; Make the background transparent,
+        this.gui.BackColor := "EEAA99"
+        WinSetTransColor("EEAA99", this.gui)
+
         width := 1000
         height := 200
         padding := 30
-        Gui, Show, % "x" A_ScreenWidth - width - padding  "y" padding "w" width "h" height, "ahk debugger message show"
-        Gui, +Lastfound
-        WinSet, TransColor, %CustomColor% 255
-        this.selectCanvas( "ahk debugger message show" )
-        this.show("Hello World")
-    }
-
-    selectCanvas( Title := false )
-    {
-        static	HWcanvas
-
-        if ( !Ttitle )
-            return, HWcanvas
-        
-        Process, Exist
-        WinGet, HWcanvas, ID, %Title% ahk_class AutoHotkeyGUI ahk_pid %ErrorLevel%
+        this.gui.Show("x" A_ScreenWidth - width - padding  "y" padding "w" width "h" height)
+        this.text := 0
     }
 
     show(message){
-        static Ptext
-        if ( !Ptext ){
-            Gui, Add, Text, % "HwndPtext w400 x0 y0", % message 
-        } else {
-            GuiControl, Text, % Ptext, % message 
-        }
-        hw_canvas := this.selectCanvas()
-	    WinSet, Redraw,, ahk_id %hw_canvas%
+        if (!this.text) {
+            this.text := this.gui.Add("Text", "w400 x0 y0")
+        } 
+        this.text.Text := message
+        Sleep -1
     }
 
-}
-logger := new MyLogger()
-log(message){
-    global logger
-    logger.show(message)
+    static instance := 0
+    static getInstance(){
+        if (!Logger.instance) {
+            Logger.instance := Logger()
+        }
+        return Logger.instance
+    }
+    static log(message) {
+        Logger.getInstance().show(message)
+    }
 }
