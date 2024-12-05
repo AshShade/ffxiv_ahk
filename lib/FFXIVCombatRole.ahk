@@ -1,9 +1,8 @@
 #Requires AutoHotkey v2.0
 #Include TimeTickPublisher.ahk
 #Include ScreenShotProcessor.ahk
-#Include FKeyHoldProcessor.ahk
+#Include KeySender.ahk
 #Include DesicionMaker.ahk
-#Include SendKeySubscriber.ahk
 #Include ScreenReader.ahk
 
 class FFXIVCombatRole {
@@ -11,16 +10,14 @@ class FFXIVCombatRole {
         this.screen := ScreenReader()
         timeTick := TimeTickPublisher(100)
         screenShot := ScreenShotProcessor(1, this.screen)
-        fKey := FKeyHoldProcessor.getInstance()
         decision := DecisionMaker(this.strategy())
-        sendKey := SendKeySubscriber(decision, this.keyCooldowns())
+        sendKey := KeySender(decision, this.keyMeta())
 
         timeTick.subscribe(screenShot)
-        timeTick.subscribe(fKey)
-        fKey.subscribe(sendKey)
+        timeTick.subscribe(sendKey)
         screenShot.subscribe(decision)
     }
-    keyCooldowns() {
+    keyMeta() {
         return Map()
     }
     strategy() {

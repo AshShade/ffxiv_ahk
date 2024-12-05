@@ -9,8 +9,8 @@ class Viper extends FFXIVCombatRole {
             ActiveSkillDetector(this.screen,
             [
                 ["F1",1830,1083],
-                ["F2",1900,1083],
-                ["F3",1970,1083]
+                ; ["F2",1900,1083],
+                ; ["F3",1970,1083]
             ]),
             ActiveSkillDetector(this.screen,
             [
@@ -30,10 +30,19 @@ class Viper extends FFXIVCombatRole {
             "e"
         ]
     }
-    keyCooldowns() {
+    keyMeta() {
         return Map(
-            "F2", 1500,
-            "F3", 1500
+            "F1", {
+                auto: true
+            },
+            "F2", {
+                cooldown: 700,
+                auto: true
+            },
+            "F3", {
+                cooldown: 700,
+                auto: true
+            }
         )
     }
 }
